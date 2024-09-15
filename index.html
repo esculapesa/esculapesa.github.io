@@ -39,6 +39,12 @@
         </div>
     </div>
 
+    <!-- Search input -->
+    <div class="form-row">
+        <label for="searchInput">Search: </label>
+        <input type="text" id="searchInput" placeholder="Search in content or spoken...">
+    </div>
+
     <div id="slidesContainer"></div>
 
     <!-- Include the external JS file containing the slidesData -->
@@ -50,6 +56,7 @@
         const languageSelector1 = document.getElementById('languageSelector1');
         const languageSelector2 = document.getElementById('languageSelector2');
         const displayModeSelector = document.getElementById('displayMode');
+        const searchInput = document.getElementById('searchInput');
         const language2Container = document.getElementById('language2Container');
 
         function toggleLanguageOptions() {
@@ -61,7 +68,7 @@
             }
         }
 
-        function displaySlides(language1, language2, displayMode) {
+        function displaySlides(language1, language2, displayMode, searchText = '') {
             slidesContainer.innerHTML = ''; // Clear existing slides
 
             const isTwoLanguages = language2 && displayMode !== 'both'; // Only content/spoken with two languages
@@ -73,6 +80,20 @@
             const maxSlides = Math.max(slidesData[language1]?.length || 0, language2 ? slidesData[language2]?.length || 0 : 0);
 
             for (let i = 0; i < maxSlides; i++) {
+                // Get the slide content and spoken
+                const contentText1 = slidesData[language1]?.[i]?.content || '';
+                const spokenText1 = slidesData[language1]?.[i]?.spoken || '';
+                const contentText2 = slidesData[language2]?.[i]?.content || '';
+                const spokenText2 = slidesData[language2]?.[i]?.spoken || '';
+
+                // Check if the search text is found in content or spoken
+                const foundInContentOrSpoken = contentText1.includes(searchText) || spokenText1.includes(searchText) || contentText2.includes(searchText) || spokenText2.includes(searchText);
+
+                // Skip slide if searchText is not found
+                if (searchText && !foundInContentOrSpoken) {
+                    continue;
+                }
+
                 const slideElement = document.createElement('div');
                 slideElement.classList.add('slide');
 
@@ -88,12 +109,12 @@
                 if (isSingleLanguageWithBoth) {
                     const contentElement = document.createElement('div');
                     contentElement.classList.add('slide-content');
-                    contentElement.innerHTML = `<h2>${slidesData[language1][i].title}</h2>${slidesData[language1][i].content}`;
+                    contentElement.innerHTML = `<h2>${slidesData[language1][i].title}</h2>${contentText1}`;
                     slideElement.appendChild(contentElement);
 
                     const spokenElement = document.createElement('div');
                     spokenElement.classList.add('slide-content');
-                    spokenElement.innerHTML = `<h2>Spoken</h2>${slidesData[language1][i].spoken}`;
+                    spokenElement.innerHTML = `<h2>Spoken</h2>${spokenText1}`;
                     slideElement.appendChild(spokenElement);
                 }
                 // Case 2: Two languages side by side with only content or spoken
@@ -126,14 +147,19 @@
 
         // Change language or display mode
         languageSelector1.addEventListener('change', () => {
-            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value);
+            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value, searchInput.value);
         });
         languageSelector2.addEventListener('change', () => {
-            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value);
+            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value, searchInput.value);
         });
         displayModeSelector.addEventListener('change', () => {
             toggleLanguageOptions(); // Toggle language options based on the selected mode
-            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value);
+            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value, searchInput.value);
+        });
+
+        // Search input event listener
+        searchInput.addEventListener('input', () => {
+            displaySlides(languageSelector1.value, languageSelector2.value, displayModeSelector.value, searchInput.value);
         });
     </script>
 </body>

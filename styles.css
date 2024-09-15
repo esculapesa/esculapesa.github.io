@@ -17,8 +17,40 @@ h1 {
     gap: 10px;
     align-items: center; /* Aligns text and select inputs vertically */
     margin-bottom: 15px; /* Adds space between the rows */
+    flex-wrap: wrap; /* Allows wrapping if the screen is narrow */
 }
 
+/* Set the width of select and input fields */
+.form-row select,
+.form-row input[type="text"] {
+    padding: 5px;
+    font-size: 16px;
+    background-color: #ffdab9; /* Peach Puff for dropdown background */
+    border: 1px solid #b8860b; /* Dark Goldenrod border */
+    color: #4d3900; /* Darker golden text */
+    font-family: Georgia, serif;
+    height: 36px; /* Ensures uniform height for both select and input */
+    box-sizing: border-box;
+    width: auto; /* Ensures the input takes only the necessary width */
+    max-width: 300px; /* Set a maximum width to avoid overflow */
+}
+
+label {
+    font-size: 16px;
+    color: #4d3900;
+}
+
+select:focus,
+input[type="text"]:focus {
+    outline: none;
+    border-color: #8b4513; /* SaddleBrown focus */
+}
+
+input[type="text"]::placeholder {
+    color: #8b4513; /* SaddleBrown placeholder color */
+}
+
+/* Slide container styles */
 .slide {
     display: flex;
     align-items: flex-start;
@@ -60,24 +92,4 @@ h1 {
 .slide-content p {
     margin: 0;
     line-height: 1.6;
-}
-
-select {
-    padding: 5px;
-    font-size: 16px;
-    background-color: #ffdab9; /* Peach Puff for dropdown background */
-    border: 1px solid #b8860b; /* Dark Goldenrod border */
-    color: #4d3900; /* Darker golden text */
-    font-family: Georgia, serif;
-    height: 36px; /* Ensures uniform height */
-}
-
-label {
-    font-size: 16px;
-    color: #4d3900;
-}
-
-select:focus {
-    outline: none;
-    border-color: #8b4513; /* SaddleBrown focus */
 }
