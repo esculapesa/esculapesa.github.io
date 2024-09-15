@@ -63,26 +63,28 @@ input[type="text"]::placeholder {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.slide img {
-    width: 100%;
-    height: auto;
-}
 
 .single .slide img,
 .single .slide-content {
-    width: 50%; /* Equal width for image and content in single-language mode */
+    width: 50%; /* Half width for image and content in single-language mode */
 }
 
 .double .slide img,
 .double .slide-content {
-    width: 33.33%; /* One third width for image, and content or spoken text for each language */
+    width: 33.33%; /* One-third width for image and content in two-language mode */
 }
 
 .triple .slide img,
 .triple .slide-content {
-    width: 33.33%; /* One third width for image, content, and spoken text in one-language mode */
+    width: 33.33%; /* One-third width for image, content, and spoken text in one-language mode */
 }
 
+/* Fallback if image width needs to adjust differently */
+.slide img {
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Styling for the text content */
 .slide-content h2 {
     margin: 0;
     padding-bottom: 10px;

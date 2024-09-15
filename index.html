@@ -71,34 +71,40 @@
         function displaySlides(language1, language2, displayMode, searchText = '') {
             slidesContainer.innerHTML = ''; // Clear existing slides
 
-            const isTwoLanguages = language2 && displayMode !== 'both'; // Only content/spoken with two languages
+            const isTwoLanguages = language2 && displayMode !== 'both'; // Two languages, content or spoken
             const isSingleLanguageWithBoth = !language2 && displayMode === 'both'; // Content and spoken for one language
 
-            // Apply appropriate class based on the mode
+            // Set the layout class based on the mode
             slidesContainer.className = isSingleLanguageWithBoth ? 'triple' : isTwoLanguages ? 'double' : 'single';
 
-            const maxSlides = Math.max(slidesData[language1]?.length || 0, language2 ? slidesData[language2]?.length || 0 : 0);
 
-            for (let i = 0; i < maxSlides; i++) {
+            slidesData.forEach(slide => {
+                const slideDataLang1 = slide.languages[language1];
+                const slideDataLang2 = slide.languages[language2];
+                const slideDataEn = slide.languages['en']; // Fallback to English for images
+
+                // Check if the language has content
+                if (!slideDataLang1) return;
+
                 // Get the slide content and spoken
-                const contentText1 = slidesData[language1]?.[i]?.content || '';
-                const spokenText1 = slidesData[language1]?.[i]?.spoken || '';
-                const contentText2 = slidesData[language2]?.[i]?.content || '';
-                const spokenText2 = slidesData[language2]?.[i]?.spoken || '';
+                const contentText1 = slideDataLang1?.content || '';
+                const spokenText1 = slideDataLang1?.spoken || '';
+                const contentText2 = slideDataLang2?.content || '';
+                const spokenText2 = slideDataLang2?.spoken || '';
 
                 // Check if the search text is found in content or spoken
                 const foundInContentOrSpoken = contentText1.includes(searchText) || spokenText1.includes(searchText) || contentText2.includes(searchText) || spokenText2.includes(searchText);
 
                 // Skip slide if searchText is not found
                 if (searchText && !foundInContentOrSpoken) {
-                    continue;
+                    return;
                 }
 
                 const slideElement = document.createElement('div');
                 slideElement.classList.add('slide');
 
                 // Use English image if the selected language's image is missing
-                const imgSrc = slidesData[language1]?.[i]?.image || slidesData['en']?.[i]?.image;
+                const imgSrc = slideDataLang1?.image || slideDataEn?.image;
 
                 const imgElement = document.createElement('img');
                 imgElement.src = imgSrc || ''; // Ensure a fallback to an empty string if both are missing
@@ -109,7 +115,7 @@
                 if (isSingleLanguageWithBoth) {
                     const contentElement = document.createElement('div');
                     contentElement.classList.add('slide-content');
-                    contentElement.innerHTML = `<h2>${slidesData[language1][i].title}</h2>${contentText1}`;
+                    contentElement.innerHTML = `<h2>${slideDataLang1.title}</h2>${contentText1}`;
                     slideElement.appendChild(contentElement);
 
                     const spokenElement = document.createElement('div');
@@ -121,24 +127,24 @@
                 else if (isTwoLanguages) {
                     const contentElement1 = document.createElement('div');
                     contentElement1.classList.add('slide-content');
-                    contentElement1.innerHTML = `<h2>${slidesData[language1][i].title}</h2>${slidesData[language1][i][displayMode]}`;
+                    contentElement1.innerHTML = `<h2>${slideDataLang1.title}</h2>${slideDataLang1[displayMode]}`;
                     slideElement.appendChild(contentElement1);
 
                     const contentElement2 = document.createElement('div');
                     contentElement2.classList.add('slide-content');
-                    contentElement2.innerHTML = `<h2>${slidesData[language2][i].title}</h2>${slidesData[language2][i][displayMode]}`;
+                    contentElement2.innerHTML = `<h2>${slideDataLang2.title}</h2>${slideDataLang2[displayMode]}`;
                     slideElement.appendChild(contentElement2);
                 }
                 // Case 3: One language with either content or spoken
                 else {
                     const contentElement = document.createElement('div');
                     contentElement.classList.add('slide-content');
-                    contentElement.innerHTML = `<h2>${slidesData[language1][i].title}</h2>${slidesData[language1][i][displayMode]}`;
+                    contentElement.innerHTML = `<h2>${slideDataLang1.title}</h2>${slideDataLang1[displayMode]}`;
                     slideElement.appendChild(contentElement);
                 }
 
                 slidesContainer.appendChild(slideElement);
-            }
+            });
         }
 
         // Initial load
